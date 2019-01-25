@@ -63,7 +63,7 @@
                                (edge-node1 e) total-nodes)))
               (if (> (edge-node2 e) total-nodes)
                 (error (format #f "node index (~d) exceeds header limit (~d)"
-                               (edge-node1 2) total-nodes)))
+                               (edge-node2 e) total-nodes)))
 
               (loop (cons (parse-edge line) res)
                     (read-line port)))))))))
@@ -147,6 +147,9 @@
             (add-mst-node (edge-node1 min-edge))
             (add-mst-node (edge-node2 min-edge))
             (loop (cons min-edge mst-edges))))))))
+
+(define (test)
+  (prims-mst-simple-heap (read-graph "edges.txt")))
 
 ;; end of file
 ;; vim: et
