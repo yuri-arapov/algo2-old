@@ -116,7 +116,7 @@
                 ;;(format #t "~a ~d ~d\n" i to sa)
                 (set-a to sa)))
 
-    _a)) ;; result is a vector of shortest path from s to every other nodes
+    _a)) ;; result is a vector of shortest path distance from s to every other nodes
 
 
 ;; 2599,2610,2947,2052,2367,2399,2029,2442,2505,3068
