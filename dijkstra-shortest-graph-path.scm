@@ -3,12 +3,12 @@
 (define (space-char? c) (member c '(#\space #\tab #\newline #\return) char=?))
 
 
-;; split string into list of strings according to given predicate pred
-;; (pred c) -> true -- it is separator character
-;; (pred c) -> false -- is is valid character
+;; split string into list of strings according to given predicate "separator?"
+;; (separator? c) -> true -- it is separator character
+;; (separator? c) -> false -- is is valid character
 ;; example:
 ;;   (split-string-p " a b c  d " space-char?) => ("a" "b" "c" "d")
-(define (split-string-p str separator-pred)
+(define (split-string-p str separator?)
   (define (add-to-res i j res)
     (if (> j i) (cons (substring str i j) res)
         res))
@@ -16,7 +16,7 @@
     (let loop ((i 0) (j 0) (res '()))
       (if (= j end)
           (reverse (add-to-res i j res))
-          (if (separator-pred (string-ref str j))
+          (if (separator? (string-ref str j))
               (loop (+ 1 j) (+ 1 j) (add-to-res i j res))
               (loop i (+ 1 j) res))))))
 
