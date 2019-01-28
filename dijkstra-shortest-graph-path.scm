@@ -76,13 +76,19 @@
      (set-a (lambda (v socre) (vector-set! _a v socre)))
      (explored? (lambda (v) (< (a v) inf)))
 
-     ;; score structure (distance from to)
+     ;; score structure: (distance from to)
      ;; "from" and "to" constitute an edge (tail and head)
      ;; "distance" - is a path distance from starting vertex to "to"
      (make-score (lambda (a from to) (list a from to)))
      (score-a (lambda (s) (car s)))
      (score-from (lambda (s) (cadr s)))
      (score-to (lambda (s) (caddr s)))
+     (min-score (lambda (s1 s2) (if (< (score-a s1) (score-a s2)) s1 s2)))
+
+     ;; edge helpers
+     (edge->score (lambda (from edge)
+                    (make-score (+ (a from) (edge-distance edge)) from (edge-head edge))))
+     (edge-explored? (lambda (edge) (explored? (edge-head edge))))
 
      ;; find edge with the best score that crosses the frontier.
      ;; return (score from to).
@@ -90,17 +96,12 @@
        (lambda ()
          (fold (lambda (node best-score)
                  (if (explored? (node-vertex node))
-                     (let* ((from (node-vertex node))
-                            (from-a (a from)))
-                       (fold (lambda (edge best-score)
-                               (let* ((w (edge-head edge))
-                                      (d (edge-distance edge)))
-                                 (if (and (not (explored? w))
-                                          (< (+ from-a d) (score-a best-score)))
-                                     (make-score (+ from-a d) from w)
-                                     best-score)))
-                             best-score
-                             (node-edges node))) ;; throughout all node edges
+                     (fold (lambda (edge best-score)
+                             (if (not (edge-explored? edge))
+                                 (min-score (edge->score (node-vertex node) edge) best-score)
+                                 best-score))
+                           best-score
+                           (node-edges node)) ;; throughout all node edges
                      best-score))
                (make-score inf 0 0)
                g)))) ;; throughout all graph nodes
