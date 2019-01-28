@@ -29,33 +29,28 @@
             ((not (valid-node? node2)) #t)
             (else (less (data-ref node1) (data-ref node2)))))
 
-    (define (heapify-up)
-      (let loop ((node (last-node)))
-        (and-let* (((positive? node))
-                   (prnt (parent node))
-                   ((less? node prnt)))
-          (data-swap prnt node)
-          (loop prnt)))
-      #t)
+    (define (min-of node1 node2)
+      (if (less? node1 node2) node1 node2))
 
-    (define (heapify-down)
-      (let loop ((node 0))
-        (let ((smaller (fold 
-                         (lambda (i smallest)
-                           (if (less? i smallest)
-                             i
-                             smallest))
-                         node
-                         (list (left node) (right node)))))
-          (if (= node smaller) #t
+    (define (heapify-up node)
+      (if (positive? node)
+          (let ((prnt (parent node)))
+            (if (less? node prnt)
+                (begin
+                  (data-swap prnt node)
+                  (heapify-up prnt))))))
+
+    (define (heapify-down node)
+      (let ((smaller (fold min-of node (list (left node) (right node)))))
+        (if (not (= node smaller))
             (begin
               (data-swap node smaller)
-              (loop smaller))))))
+              (heapify-down smaller)))))
 
-    (define (add val) 
+    (define (add val)
       (data-set! count val)
       (set! count (1+ count))
-      (heapify-up))
+      (heapify-up (last-node)))
 
     (define (get)
       (if (zero? count)
@@ -63,7 +58,7 @@
         (let ((res (data-ref 0)))
           (data-swap 0 (last-node))
           (set! count (1- count))
-          (heapify-down)
+          (heapify-down 0)
           res)))
 
     (define (ref node)
