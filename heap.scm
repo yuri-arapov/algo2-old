@@ -61,8 +61,9 @@
           (heapify-down 0)
           res)))
 
-    (define (ref node)
-      (and (valid-node? node) (data-ref node)))
+    (define (ref node) (and (valid-node? node) (data-ref node)))
+
+    (define (top) (ref 0))
 
     (define (log2 n) (/ (log n) (log 2)))
 
@@ -90,6 +91,7 @@
                    ;; operations
                    ((add)     (add (car args)) this)
                    ((get)     (get))
+                   ((top)     (top))
                    ((ref)     (ref (car args)))
                    ((size)    (data-size))
                    ((height)  (height))
@@ -101,6 +103,7 @@
 
 (define (heap-add h x) (h 'add x))
 (define (heap-get h)   (h 'get))
+(define (heap-top h)   (h 'top))
 (define (heap-ref h i) (h 'ref i))
 (define (heap-count h) (h 'count))
 (define (heap-size h)  (h 'size))
